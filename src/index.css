@@ -1,0 +1,400 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   TAROT — Premium Visual Layer
+   Enhanced animations, glows, and cinematic transitions
+   ═══════════════════════════════════════════════════════════════ */
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: #05050A;
+    color: #FDF5E6;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  /* ── Scrollbar Hiding (all browsers) ── */
+  * {
+    scrollbar-width: none;           /* Firefox */
+    -ms-overflow-style: none;        /* IE / Edge */
+  }
+  *::-webkit-scrollbar {
+    display: none;                   /* Chrome / Safari / Opera */
+  }
+}
+
+@layer components {
+
+  /* ──────────────────────────────────────
+     Border & Glow Utilities
+     ────────────────────────────────────── */
+  .border-gold-dim {
+    border-color: #B8860B;
+  }
+
+  .glow-mystic {
+    box-shadow: 0 0 28px 6px rgba(157, 0, 255, 0.4);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 24px 4px rgba(255, 215, 0, 0.3);
+  }
+
+  /* ──────────────────────────────────────
+     Card Zone Focused — floating + rune border
+     ────────────────────────────────────── */
+  .card-zone-focused {
+    position: relative;
+    box-shadow: 0 0 40px 12px rgba(0, 240, 255, 0.6),
+                0 0 20px 4px rgba(157, 0, 255, 0.5);
+    transform: translateY(-20px) scale(1.15);
+    animation:
+      zoneFocusPulse 2s ease-in-out infinite,
+      zoneFocusFloat 3s ease-in-out infinite;
+  }
+
+  /* Subtle floating oscillation */
+  @keyframes zoneFocusFloat {
+    0%, 100% { translate: 0  0px; }
+    50%      { translate: 0 -5px; }
+  }
+
+  @keyframes zoneFocusPulse {
+    0%, 100% {
+      box-shadow: 0 0 40px 12px rgba(0, 240, 255, 0.6),
+                  0 0 20px 4px rgba(157, 0, 255, 0.5);
+    }
+    50% {
+      box-shadow: 0 0 55px 18px rgba(0, 240, 255, 0.8),
+                  0 0 30px 8px rgba(157, 0, 255, 0.7);
+    }
+  }
+
+  /* Rotating rune border ring */
+  .card-zone-focused::before {
+    content: '⚝ ☽ ✦ ☾ ⚝ ☽ ✦ ☾';
+    position: absolute;
+    inset: -18px;
+    border-radius: 14px;
+    border: 1.5px dashed rgba(0, 240, 255, 0.35);
+    color: rgba(0, 240, 255, 0.25);
+    font-size: 7px;
+    letter-spacing: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: runeCircle 8s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .zone-focus-label {
+    animation: labelPulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes labelPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.5; }
+  }
+
+  /* ──────────────────────────────────────
+     Text Glow Utilities
+     ────────────────────────────────────── */
+  .text-glow-cyan {
+    text-shadow:
+      0 0  6px rgba(0, 240, 255, 0.7),
+      0 0 18px rgba(0, 240, 255, 0.4),
+      0 0 40px rgba(0, 240, 255, 0.15);
+  }
+
+  .text-glow-gold {
+    text-shadow:
+      0 0  6px rgba(255, 215, 0, 0.7),
+      0 0 18px rgba(255, 215, 0, 0.4),
+      0 0 40px rgba(255, 215, 0, 0.15);
+  }
+
+  /* ──────────────────────────────────────
+     Ambient Pulse-Glow Utility
+     ────────────────────────────────────── */
+  .animate-pulseGlow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 1; }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCENE TRANSITIONS — fade + scale + blur
+   ═══════════════════════════════════════════════════════════════ */
+.scene-transition {
+  animation: sceneFadeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes sceneFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   IDLE PULSE
+   ═══════════════════════════════════════════════════════════════ */
+.idle-pulse {
+  animation: idlePulse 3s ease-in-out infinite;
+}
+@keyframes idlePulse {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SHUFFLE FAN
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes shuffleFan {
+  0%   {
+    transform: translate(0, 0) rotate(0deg) rotateX(0deg) rotateY(0deg) scale(1);
+    opacity: 1;
+  }
+  35%  {
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) rotateX(25deg) rotateY(15deg) scale(1.1);
+    opacity: 0.9;
+  }
+  65%  {
+    transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) rotateX(25deg) rotateY(15deg) scale(1.1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg) rotateX(0deg) rotateY(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ORBIT POP
+   ═══════════════════════════════════════════════════════════════ */
+.orbit-card {
+  animation: orbitPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes orbitPop {
+  from { opacity: 0; transform: scale(0.4); }
+  to   { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CARD FLIP — Cinematic 0.8s with scale-bounce & golden flash
+   ═══════════════════════════════════════════════════════════════ */
+.card-flip-container {
+  perspective: 800px;
+}
+
+.card-flipper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  /* Cinematic flip: 0.8s with a custom bounce feel */
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Scale-bounce during mid-flip via animation triggered on .is-flipped */
+.card-flipper.is-flipped {
+  animation: flipBounce 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes flipBounce {
+  0%   { transform: rotateY(0deg)   scale(1); }
+  45%  { transform: rotateY(90deg)  scale(1.05); }
+  55%  { transform: rotateY(90deg)  scale(1.05); }
+  100% { transform: rotateY(180deg) scale(1); }
+}
+
+/* Golden flash pseudo-element — bursts at midpoint of flip */
+.card-flipper::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 215, 0, 0.45) 0%,
+    rgba(255, 185, 0, 0.15) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.15s ease;
+}
+
+.card-flipper.is-flipped::after {
+  animation: goldenFlash 0.8s ease-out;
+}
+
+@keyframes goldenFlash {
+  0%   { opacity: 0; }
+  40%  { opacity: 1; }
+  60%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.card-back  { transform: rotateY(0deg); }
+.card-front { transform: rotateY(180deg); }
+
+/* ═══════════════════════════════════════════════════════════════
+   DETAIL VIEW — Cinematic entry with golden glow & deep scale
+   ═══════════════════════════════════════════════════════════════ */
+.detail-enter {
+  animation: detailSlideUp 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes detailSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.85) translateZ(-100px);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) translateZ(0);
+    filter: blur(0);
+  }
+}
+
+/* Backdrop blur hint — apply to the detail overlay container */
+.detail-backdrop {
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DRAW ANIMATION
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes drawToReadingArea {
+  0% {
+    filter: brightness(1.2);
+    box-shadow: 0 0 40px 15px rgba(0, 240, 255, 0.9);
+    transform: scale(1.5) rotateX(0deg) rotateY(0deg) translateY(-10px);
+    z-index: 1000;
+  }
+  30% {
+    filter: brightness(1.5);
+    transform: scale(1.6) rotateX(10deg) rotateY(5deg) translateY(-30px);
+  }
+  100% {
+    transform: translate(0, 250px) scale(0.5);
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+.draw-anim {
+  animation: drawToReadingArea 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ARCANE CORE
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes corePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 30px 5px rgba(157,0,255,0.4),
+                inset 0 0 20px rgba(0,240,255,0.5);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 50px 15px rgba(0,240,255,0.6),
+                inset 0 0 30px rgba(157,0,255,0.6);
+  }
+}
+.arcane-core {
+  animation: corePulse 4s ease-in-out infinite;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.core-inner-spin {
+  animation: spinSlow 12s linear infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MYSTIC FOCUS
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes mysticFocusWave {
+  0%   { box-shadow: 0 0 0 0 rgba(0,240,255,0.7); }
+  70%  { box-shadow: 0 0 0 15px rgba(0,240,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,240,255,0); }
+}
+
+@keyframes runeCircle {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(-360deg); }
+}
+
+.focus-mystic {
+  box-shadow: 0 0 25px 8px rgba(0,240,255,0.8),
+              0 0 45px 15px rgba(157,0,255,0.5) !important;
+  animation: mysticFocusWave 2s infinite;
+  transform: scale(1.4) !important;
+  z-index: 999 !important;
+}
+.focus-mystic::before {
+  content: '⚝ ☽ ★ ☾';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  height: 140%;
+  border-radius: 50%;
+  border: 1px dashed rgba(0,240,255,0.4);
+  color: rgba(0,240,255,0.3);
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 4px;
+  animation: runeCircle 6s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SCALE-UP CENTER
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes scaleUpCenter {
+  0%   { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.scale-up-center {
+  animation: scaleUpCenter 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
