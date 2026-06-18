@@ -4,8 +4,12 @@
  * Handles loading, initialization, and camera streaming lifecycle.
  */
 
-import { Hands } from '@mediapipe/hands'
-import { Camera } from '@mediapipe/camera_utils'
+import * as mpHands from '@mediapipe/hands'
+import * as mpCamera from '@mediapipe/camera_utils'
+
+// Production-safe extraction of constructors
+const Hands = mpHands.Hands || window.Hands || mpHands.default?.Hands
+const Camera = mpCamera.Camera || window.Camera || mpCamera.default?.Camera
 
 export class HandTrackingService {
   constructor() {
