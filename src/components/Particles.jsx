@@ -129,98 +129,108 @@ export default function Particles() {
       aria-hidden="true"
     >
       {/* ============ 1. NEBULA LAYER ============ */}
-      {nebulae.map((n) => (
-        <div
-          key={n.id}
-          style={{
-            position: 'absolute',
-            inset: '-20%',           /* oversized so drift doesn't show edges */
-            background: n.gradient,
-            animation: `${n.animName} ${n.dur}s ease-in-out infinite`,
-            willChange: 'transform',
-          }}
-        />
-      ))}
-
-      {/* ============ 2. STAR FIELD ============ */}
-      {stars.map((s) => {
-        const animName =
-          s.tier === 'bright' ? 'starPulse' : 'starTwinkle';
-        return (
+      <div className="absolute inset-0 parallax-layer-1">
+        {nebulae.map((n) => (
           <div
-            key={s.id}
+            key={n.id}
+            className="motion-safe-anim"
             style={{
               position: 'absolute',
-              left: `${s.x}%`,
-              top: `${s.y}%`,
-              width: `${s.size}px`,
-              height: `${s.size}px`,
-              borderRadius: '50%',
-              backgroundColor: s.tier === 'bright'
-                ? '#e0d0ff'
-                : '#ffffff',
-              opacity: s.opacity,
-              boxShadow: glowForStar(s),
-              mixBlendMode: 'screen',
-              animation: `${animName} ${s.twinkleDur}s ease-in-out infinite ${s.twinkleDelay}s`,
-              willChange: 'opacity',
+              inset: '-20%',           /* oversized so drift doesn't show edges */
+              background: n.gradient,
+              animation: `${n.animName} ${n.dur}s ease-in-out infinite`,
+              willChange: 'transform',
             }}
           />
-        );
-      })}
+        ))}
+      </div>
+
+      {/* ============ 2. STAR FIELD ============ */}
+      <div className="absolute inset-0 parallax-layer-2">
+        {stars.map((s) => {
+          const animName =
+            s.tier === 'bright' ? 'starPulse' : 'starTwinkle';
+          const reduceHideClass = s.tier === 'tiny' ? 'reduce-motion-hide' : '';
+          return (
+            <div
+              key={s.id}
+              className={`motion-safe-anim ${reduceHideClass}`}
+              style={{
+                position: 'absolute',
+                left: `${s.x}%`,
+                top: `${s.y}%`,
+                width: `${s.size}px`,
+                height: `${s.size}px`,
+                borderRadius: '50%',
+                backgroundColor: s.tier === 'bright'
+                  ? '#e0d0ff'
+                  : '#ffffff',
+                opacity: s.opacity,
+                boxShadow: glowForStar(s),
+                mixBlendMode: 'screen',
+                animation: `${animName} ${s.twinkleDur}s ease-in-out infinite ${s.twinkleDelay}s`,
+                willChange: 'opacity',
+              }}
+            />
+          );
+        })}
+      </div>
 
       {/* ============ 3. FLOATING MOTES ============ */}
-      {motes.map((m) => (
-        <div
-          key={m.id}
-          style={{
-            position: 'absolute',
-            left: `${m.x}%`,
-            bottom: '-2%',
-            width: `${m.size}px`,
-            height: `${m.size}px`,
-            borderRadius: '50%',
-            backgroundColor: m.color,
-            boxShadow: `0 0 ${m.size * 2}px ${m.color}, 0 0 ${m.size * 4}px ${m.color}`,
-            mixBlendMode: 'screen',
-            animation: `moteRise ${m.riseDur}s linear infinite ${m.delay}s,
-                         moteDrift ${m.driftDur}s ease-in-out infinite ${m.delay}s`,
-            /* encode per-mote amplitude as a CSS custom property */
-            '--drift-amp': `${m.driftAmp}px`,
-            willChange: 'transform, opacity',
-          }}
-        />
-      ))}
+      <div className="absolute inset-0 parallax-layer-3 reduce-motion-hide">
+        {motes.map((m) => (
+          <div
+            key={m.id}
+            className="motion-safe-anim"
+            style={{
+              position: 'absolute',
+              left: `${m.x}%`,
+              bottom: '-2%',
+              width: `${m.size}px`,
+              height: `${m.size}px`,
+              borderRadius: '50%',
+              backgroundColor: m.color,
+              boxShadow: `0 0 ${m.size * 2}px ${m.color}, 0 0 ${m.size * 4}px ${m.color}`,
+              mixBlendMode: 'screen',
+              animation: `moteRise ${m.riseDur}s linear infinite ${m.delay}s,
+                           moteDrift ${m.driftDur}s ease-in-out infinite ${m.delay}s`,
+              /* encode per-mote amplitude as a CSS custom property */
+              '--drift-amp': `${m.driftAmp}px`,
+              willChange: 'transform, opacity',
+            }}
+          />
+        ))}
+      </div>
 
-      {/* ============ 4. FOG BANDS ============ */}
+      {/* ============ 4. FOG BANDS (Optimized - No blur) ============ */}
       {/* Bottom fog – purple tinted */}
       <div
+        className="motion-safe-anim"
         style={{
           position: 'absolute',
-          bottom: '-5%',
-          left: '-10%',
-          width: '120%',
-          height: '35%',
+          bottom: '-10%',
+          left: '-20%',
+          width: '140%',
+          height: '45%',
           background:
-            'linear-gradient(to top, rgba(80, 20, 120, 0.15) 0%, transparent 100%)',
-          filter: 'blur(40px)',
-          opacity: 0.15,
+            'radial-gradient(ellipse at bottom, rgba(80, 20, 120, 0.4) 0%, transparent 70%)',
+          opacity: 0.4,
           animation: 'fogDriftBottom 18s ease-in-out infinite',
           willChange: 'transform',
         }}
       />
       {/* Top fog – cyan tinted */}
       <div
+        className="motion-safe-anim"
         style={{
           position: 'absolute',
-          top: '-5%',
-          left: '-10%',
-          width: '120%',
-          height: '30%',
+          top: '-10%',
+          left: '-20%',
+          width: '140%',
+          height: '40%',
           background:
-            'linear-gradient(to bottom, rgba(0, 160, 200, 0.08) 0%, transparent 100%)',
-          filter: 'blur(50px)',
-          opacity: 0.08,
+            'radial-gradient(ellipse at top, rgba(0, 160, 200, 0.25) 0%, transparent 70%)',
+          opacity: 0.3,
           animation: 'fogDriftTop 22s ease-in-out infinite',
           willChange: 'transform',
         }}
@@ -285,6 +295,35 @@ export default function Particles() {
         @keyframes fogDriftTop {
           0%, 100% { transform: translateX(0); }
           50%      { transform: translateX(-4%); }
+        }
+
+        /* --- CSS Parallax Layers --- */
+        @keyframes parallaxSlow {
+          0%, 100% { transform: translateY(0px) translateX(0px); }
+          50%      { transform: translateY(-10px) translateX(5px); }
+        }
+        @keyframes parallaxMedium {
+          0%, 100% { transform: translateY(0px) translateX(0px); }
+          50%      { transform: translateY(-20px) translateX(-10px); }
+        }
+        @keyframes parallaxFast {
+          0%, 100% { transform: translateY(0px) translateX(0px); }
+          50%      { transform: translateY(-40px) translateX(15px); }
+        }
+        
+        .parallax-layer-1 { animation: parallaxSlow 25s ease-in-out infinite; }
+        .parallax-layer-2 { animation: parallaxMedium 18s ease-in-out infinite; }
+        .parallax-layer-3 { animation: parallaxFast 12s ease-in-out infinite; }
+
+        /* --- Accessibility: Reduced Motion --- */
+        @media (prefers-reduced-motion: reduce) {
+          .reduce-motion-hide {
+            display: none !important;
+          }
+          .motion-safe-anim, .parallax-layer-1, .parallax-layer-2, .parallax-layer-3 {
+            animation: none !important;
+            transform: none !important;
+          }
         }
       `}</style>
     </div>

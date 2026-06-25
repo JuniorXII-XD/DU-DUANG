@@ -5,17 +5,22 @@ import { useCardAnimations } from '../hooks/useCardAnimations'
 const POSITIONS      = ['Past', 'Present', 'Future']
 const POSITION_COLORS = ['#A0AABF', '#FFD700', '#D280FF']
 
-function TarotCard({ card, position, positionColor, index, isFocused, isVisible }) {
+function TarotCard({ card, position, positionColor, index, isFocused, isVisible, holdProgress, anyCardRevealed }) {
   const isFaceUp = card.faceUp
 
   return (
     <div 
-      className="flex flex-col items-center gap-3 transition-opacity duration-500"
-      style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(20px)' }}
+      className={`flex flex-col items-center gap-3 transition-all duration-700 flex-shrink-0 ${anyCardRevealed && !card.faceUp ? 'opacity-40 blur-[2px] scale-95' : ''}`}
+      style={{ 
+        opacity: isVisible && !(anyCardRevealed && !card.faceUp) ? 1 : (isVisible ? 0.4 : 0), 
+        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+        width: 'min(30vw, 120px)', // Responsive sizing: ~30vw on mobile, cap at 120px
+        zIndex: card.faceUp ? 10 : 1
+      }}
     >
-      {/* Position label */}
+      {/* Position label ABOVE card */}
       <span
-        className="font-display text-[10px] tracking-[0.2em] uppercase transition-opacity duration-300"
+        className="font-display text-[9px] md:text-[10px] tracking-[0.2em] uppercase transition-opacity duration-300"
         style={{ color: positionColor, opacity: isFocused ? 1 : 0.45 }}
       >
         {position}
@@ -23,7 +28,7 @@ function TarotCard({ card, position, positionColor, index, isFocused, isVisible 
 
       {/* Focus ring + card */}
       <div
-        className={`rounded-2xl transition-all duration-400 ${isFocused ? 'card-zone-focused' : ''}`}
+        className={`rounded-2xl transition-all duration-700 w-full ${isFocused ? 'card-zone-focused' : ''} ${card.faceUp ? 'scale-[1.15] md:scale-[1.3] cinematic-reveal-glow' : ''}`}
         style={{
           padding: isFocused ? 4 : 0,
           background: isFocused
@@ -33,8 +38,8 @@ function TarotCard({ card, position, positionColor, index, isFocused, isVisible 
       >
         {/* Card with 3-D flip */}
         <div
-          className="relative card-flip-container"
-          style={{ width: 100, height: 155 }}
+          className="relative card-flip-container w-full"
+          style={{ aspectRatio: '100 / 155' }}
           aria-label={isFaceUp ? card.name : 'Unrevealed card'}
         >
           <div
@@ -93,6 +98,18 @@ function TarotCard({ card, position, positionColor, index, isFocused, isVisible 
               </span>
             </div>
           </div>
+          
+          {/* Radial Hold Progress Indicator */}
+          {isFocused && holdProgress > 0 && !card.faceUp && (
+            <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
+              <svg width="60" height="60" viewBox="0 0 60 60" className="drop-shadow-lg transform -rotate-90">
+                <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(0, 240, 255, 0.2)" strokeWidth="4" />
+                <circle cx="30" cy="30" r="24" fill="none" stroke="#00F0FF" strokeWidth="4" 
+                        strokeDasharray="150" strokeDashoffset={150 - (150 * holdProgress)}
+                        className="transition-all duration-75" strokeLinecap="round" />
+              </svg>
+            </div>
+          )}
         </div>
       </div>
 
@@ -117,8 +134,9 @@ function TarotCard({ card, position, positionColor, index, isFocused, isVisible 
   )
 }
 
-export default function ThreeCardScene({ cards, focusedIndex, detailCard }) {
+export default function ThreeCardScene({ cards, focusedIndex, detailCard, holdProgress, justRevealed }) {
   const allRevealed     = cards.every(c => c.faceUp)
+  const anyCardRevealed = cards.some(c => c.faceUp)
   const focusedCard     = cards[focusedIndex]
   const focusedFaceUp   = focusedCard?.faceUp ?? false
   const { getCardAnimState } = useCardAnimations('THREE_CARD_READING', cards, detailCard)
@@ -127,7 +145,7 @@ export default function ThreeCardScene({ cards, focusedIndex, detailCard }) {
     <div className="flex flex-col items-center gap-8 w-full">
 
       {/* ── Three-card spread ─────────────────────────────────────────── */}
-      <div className="flex items-end gap-6 relative">
+      <div className="flex flex-row items-end justify-center gap-2 md:gap-6 relative w-full px-2 max-w-[500px]">
         {cards.map((card, i) => (
           <TarotCard
             key={card.uid}
@@ -137,8 +155,20 @@ export default function ThreeCardScene({ cards, focusedIndex, detailCard }) {
             index={i}
             isFocused={i === focusedIndex && !detailCard}
             isVisible={getCardAnimState(i).isVisible}
+            holdProgress={i === focusedIndex ? holdProgress : 0}
+            anyCardRevealed={anyCardRevealed}
           />
         ))}
+      </div>
+
+      {/* Floating Fate Revealed Toast */}
+      <div 
+        className={`fixed top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none transition-all duration-500 flex flex-col items-center ${justRevealed ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}
+      >
+        <span className="text-2xl mb-1">✨</span>
+        <span className="font-display text-sm md:text-base tracking-[0.2em] uppercase text-gold text-glow-gold drop-shadow-md">
+          Fate Revealed
+        </span>
       </div>
 
       {/* ── Prompt ────────────────────────────────────────────────────── */}

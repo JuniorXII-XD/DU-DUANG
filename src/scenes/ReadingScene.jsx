@@ -9,6 +9,7 @@ import { useReadingMachine, STATES } from '../hooks/useReadingMachine'
 import { useKeyboardDebug } from '../hooks/useKeyboardDebug'
 import { useZoneFocus } from '../hooks/useZoneFocus'
 import { useSoundSystem } from '../hooks/useSoundSystem'
+import { useHoldToReveal } from '../hooks/useHoldToReveal'
 import WebcamPreview  from '../components/WebcamPreview'
 import GestureLegend  from '../components/GestureLegend'
 import GestureDisplay from '../components/GestureDisplay'
@@ -27,32 +28,70 @@ const PHASE_LABELS = {
 }
 
 export default function ReadingScene({ videoRef, gesture, landmarks, status }) {
-  const { machine, dispatch } = useReadingMachine(gesture)
+  // Zone-based focus: maps hand X position to card zones 0/1/2
+  // We need phase to determine if it's enabled, but we need machine state.
+  // We will intercept gesture right before passing it to useReadingMachine, 
+  // but we need to know the phase first. Since we can't circular depend, we use a ref or track phase.
+  // Actually, useReadingMachine doesn't break if we pass raw gesture, 
+  // but we want to intercept 'ok_sign'.
+  // Let's call the machine first, then override the gesture passed to it?
+  // No, useReadingMachine takes a gesture. If we intercept, we must intercept based on previous phase.
+  
+  // We will intercept based on the state machine's *current* phase, which is safe to read.
+  // The state machine will process outputGesture.
+  
+  // To avoid circular dependency, we pass raw gesture to the machine temporarily to get phase?
+  // Wait, useReadingMachine internally uses useEffect to listen to gesture changes.
+  
+  // A safer way: apply useHoldToReveal, but it requires phase. 
+  // We can't know phase until useReadingMachine runs.
+  // But useReadingMachine only reads gesture in a useEffect, so we can pass the intercepted gesture.
+  // We will pass the intercepted gesture to useReadingMachine.
+  // We will determine isEnabled by checking if machine phase === STATES.THREE_CARD_READING.
+  
+  const [currentPhase, setCurrentPhase] = React.useState(STATES.IDLE)
+  const zoneFocusEnabled = currentPhase === STATES.THREE_CARD_READING
+  
+  const { outputGesture, progress, justRevealed } = useHoldToReveal(gesture, zoneFocusEnabled)
+  
+  const { machine, dispatch } = useReadingMachine(outputGesture)
   const { phase, orbitCards, readingCards, focusedIndex, detailCard } = machine
+
+  // Sync phase for the hook
+  React.useEffect(() => { setCurrentPhase(phase) }, [phase])
   
   useKeyboardDebug(machine, dispatch)
 
-  // Zone-based focus: maps hand X position to card zones 0/1/2
-  const zoneFocusEnabled = phase === STATES.THREE_CARD_READING && !detailCard
-  const zoneFocus = useZoneFocus(landmarks, zoneFocusEnabled)
+  const zoneFocus = useZoneFocus(landmarks, zoneFocusEnabled && !detailCard)
 
-  const { playAmbient, playFocusSound } = useSoundSystem()
+  const { playAmbient, onHover, onShuffle, onReveal, onTransition } = useSoundSystem()
 
   // Start ambient drone once user interacts (leaves IDLE)
-  useEffect(() => {
+  React.useEffect(() => {
     if (phase !== STATES.IDLE) {
       playAmbient()
     }
   }, [phase, playAmbient])
 
   // Play focus tick sound when focusedIndex changes
-  useEffect(() => {
+  React.useEffect(() => {
     if (phase === STATES.THREE_CARD_READING) {
-      playFocusSound()
+      onHover()
     }
-  }, [focusedIndex, phase, playFocusSound])
+  }, [focusedIndex, phase, onHover])
 
-  useEffect(() => {
+  // Play transition sound on phase change
+  React.useEffect(() => {
+    onTransition()
+    if (phase === STATES.SHUFFLING) onShuffle()
+  }, [phase, onTransition, onShuffle])
+
+  // Play reveal sound when card just revealed
+  React.useEffect(() => {
+    if (justRevealed) onReveal()
+  }, [justRevealed, onReveal])
+
+  React.useEffect(() => {
     if (zoneFocus !== null && zoneFocusEnabled) {
       dispatch({ type: 'SET_FOCUS', payload: zoneFocus })
     }
@@ -114,6 +153,8 @@ export default function ReadingScene({ videoRef, gesture, landmarks, status }) {
               cards={readingCards}
               focusedIndex={focusedIndex}
               detailCard={detailCard}
+              holdProgress={progress}
+              justRevealed={justRevealed}
             />
           )}
         </div>

@@ -53,17 +53,23 @@
     box-shadow: 0 0 24px 4px rgba(255, 215, 0, 0.3);
   }
 
-  /* ──────────────────────────────────────
-     Card Zone Focused — floating + rune border
-     ────────────────────────────────────── */
+  /* Card Zone Focused — floating + rune border */
   .card-zone-focused {
     position: relative;
+    transform: translateY(-20px) scale(1.15);
+    animation: zoneFocusFloat 3s ease-in-out infinite;
+  }
+
+  .card-zone-focused::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
     box-shadow: 0 0 40px 12px rgba(0, 240, 255, 0.6),
                 0 0 20px 4px rgba(157, 0, 255, 0.5);
-    transform: translateY(-20px) scale(1.15);
-    animation:
-      zoneFocusPulse 2s ease-in-out infinite,
-      zoneFocusFloat 3s ease-in-out infinite;
+    animation: zoneFocusPulseOpacity 2s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
   }
 
   /* Subtle floating oscillation */
@@ -72,33 +78,38 @@
     50%      { translate: 0 -5px; }
   }
 
-  @keyframes zoneFocusPulse {
-    0%, 100% {
-      box-shadow: 0 0 40px 12px rgba(0, 240, 255, 0.6),
-                  0 0 20px 4px rgba(157, 0, 255, 0.5);
-    }
-    50% {
-      box-shadow: 0 0 55px 18px rgba(0, 240, 255, 0.8),
-                  0 0 30px 8px rgba(157, 0, 255, 0.7);
-    }
+  @keyframes zoneFocusPulseOpacity {
+    0%, 100% { opacity: 0.6; }
+    50%      { opacity: 1; }
   }
 
-  /* Rotating rune border ring */
+  /* Rotating rune border ring (Arcane Ring) */
   .card-zone-focused::before {
     content: '⚝ ☽ ✦ ☾ ⚝ ☽ ✦ ☾';
     position: absolute;
-    inset: -18px;
-    border-radius: 14px;
-    border: 1.5px dashed rgba(0, 240, 255, 0.35);
-    color: rgba(0, 240, 255, 0.25);
-    font-size: 7px;
-    letter-spacing: 6px;
+    inset: -20px;
+    border-radius: 50%;
+    color: rgba(0, 240, 255, 0.4);
+    font-size: 8px;
+    letter-spacing: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: runeCircle 8s linear infinite;
+    animation: arcaneRing 10s linear infinite;
     pointer-events: none;
     z-index: -1;
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.8);
+  }
+
+  @keyframes arcaneRing {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Cinematic Reveal Glow */
+  .cinematic-reveal-glow {
+    box-shadow: 0 0 60px 20px rgba(157, 0, 255, 0.4),
+                0 0 100px 40px rgba(0, 240, 255, 0.2);
   }
 
   .zone-focus-label {

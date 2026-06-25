@@ -11,9 +11,9 @@ const GESTURE_KEYS = ['open_palm', 'pointing_finger', 'ok_sign', 'fist']
 
 export default function GestureLegend({ gesture }) {
   return (
-    <div className="fixed bottom-4 left-4 z-50">
-      <div className="flex flex-col gap-2 p-3 rounded-2xl bg-veil border border-border">
-        <p className="font-display text-[10px] tracking-[0.2em] text-gold-dim uppercase mb-1 px-1">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 md:left-4 md:-translate-x-0 md:top-1/2 md:-translate-y-1/2 z-50 w-full md:w-auto px-4 md:px-0">
+      <div className="flex flex-row md:flex-col justify-around md:justify-start gap-1 md:gap-2 p-2 md:p-3 rounded-2xl backdrop-blur-md bg-black/40 border border-border overflow-x-auto">
+        <p className="hidden md:block font-display text-[10px] tracking-[0.2em] text-gold-dim uppercase mb-1 px-1">
           Gestures
         </p>
 
@@ -25,7 +25,7 @@ export default function GestureLegend({ gesture }) {
             <div
               key={key}
               className={`
-                flex items-center gap-2.5 px-2 py-1.5 rounded-xl transition-all duration-200
+                flex items-center gap-1.5 md:gap-2.5 px-2 py-1 md:py-1.5 rounded-xl transition-all duration-200 whitespace-nowrap
                 ${isActive ? 'bg-deep border border-border' : ''}
               `}
             >
@@ -44,10 +44,10 @@ export default function GestureLegend({ gesture }) {
 
               {/* Label + meaning */}
               <div className="flex flex-col min-w-0">
-                <span className={`font-display text-[11px] tracking-wide ${isActive ? meta.color : 'text-silver'}`}>
+                <span className={`font-display text-[9px] md:text-[11px] tracking-wide ${isActive ? meta.color : 'text-silver'}`}>
                   {meta.label}
                 </span>
-                <span className="font-body text-[10px] text-silver opacity-60 truncate">
+                <span className="hidden md:block font-body text-[10px] text-silver opacity-60 truncate">
                   {meta.meaning}
                 </span>
               </div>

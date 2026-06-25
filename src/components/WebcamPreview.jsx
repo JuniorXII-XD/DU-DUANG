@@ -19,11 +19,11 @@ export default function WebcamPreview({ videoRef, status }) {
 
   return (
     <div
-      className="fixed top-4 right-4 z-50 flex flex-col items-end gap-1.5"
+      className="fixed top-4 right-4 md:right-8 md:top-8 z-50 flex flex-col items-end gap-1.5"
       aria-label="Webcam preview"
     >
       {/* Video frame */}
-      <div className="relative w-44 h-32 rounded-xl overflow-hidden border border-border bg-veil glow-mystic">
+      <div className="relative w-20 h-20 md:w-40 md:h-32 rounded-xl overflow-hidden border border-border backdrop-blur-md bg-black/40 glow-mystic">
         <video
           ref={videoRef}
           className="w-full h-full object-cover scale-x-[-1]"   /* mirror */
@@ -47,7 +47,7 @@ export default function WebcamPreview({ videoRef, status }) {
       </div>
 
       {/* Status pill */}
-      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-veil border border-border text-xs font-body text-silver">
+      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-md bg-black/40 border border-border text-[10px] md:text-xs font-body text-silver">
         <span className={`w-1.5 h-1.5 rounded-full ${info.dot}`} />
         {info.text}
       </div>

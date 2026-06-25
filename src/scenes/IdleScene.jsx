@@ -70,13 +70,13 @@ export default function IdleScene() {
 
       {/* ── Prompt ──────────────────────────────────────────────────── */}
       <div className="text-center space-y-2">
-        <p className="font-display text-2xl tracking-[0.15em] uppercase text-gold idle-pulse">
-          Arcane Oracle
+        <h1 className="font-display text-4xl tracking-[0.25em] uppercase text-gold idle-pulse text-glow-gold">
+          DU DUANG
+        </h1>
+        <p className="font-body text-sm text-silver mt-2">
+          Raise your hand to begin
         </p>
-        <p className="font-body text-sm text-silver">
-          Show an open palm to begin your reading
-        </p>
-        <p className="font-body text-xs text-gold-dim tracking-widest mt-3 opacity-70">✋ Open Palm</p>
+        <p className="font-body text-xs text-cyan-neon tracking-widest mt-4 opacity-70 animate-pulseGlow">✋ Open Palm</p>
       </div>
     </div>
   )

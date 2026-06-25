@@ -296,6 +296,26 @@ export function useSoundSystem() {
     }
   }, [muted, stopAmbient, stopOracleHum]);
 
+  // --- Future-proofing UX Event Hooks ---
+  const onHover = useCallback(() => {
+    // Placeholder for future hover audio hook
+    playFocusSound();
+  }, [playFocusSound]);
+
+  const onShuffle = useCallback(() => {
+    // Placeholder for future shuffle audio hook
+    playShuffleSound();
+  }, [playShuffleSound]);
+
+  const onReveal = useCallback(() => {
+    // Placeholder for future reveal audio hook
+    playRevealSound();
+  }, [playRevealSound]);
+
+  const onTransition = useCallback(() => {
+    // Placeholder for future scene transition audio hook
+  }, []);
+
   return {
     muted,
     toggleMute,
@@ -306,5 +326,9 @@ export function useSoundSystem() {
     stopAmbient,
     playOracleHum,
     stopOracleHum,
+    onHover,
+    onShuffle,
+    onReveal,
+    onTransition,
   };
 }
